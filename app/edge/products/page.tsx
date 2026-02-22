@@ -8,10 +8,8 @@ export const dynamic = 'force-dynamic';
 
 async function getProducts(): Promise<Product[]> {
   console.log('[EDGE] Edge fetch started at:', new Date().toISOString());
-  const startTime = Date.now();
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/products`, {
+  const res = await fetch('https://fakestoreapi.com/products', {
     cache: 'no-store',
   });
 
@@ -20,11 +18,17 @@ async function getProducts(): Promise<Product[]> {
   }
 
   const data = await res.json();
-  const endTime = Date.now();
-  console.log(`[EDGE] Edge fetch completed in ${endTime - startTime}ms`);
-  console.log('[EDGE] Edge render completed at:', new Date().toISOString());
 
-  return data;
+  const products = data.map((item: any) => ({
+    id: item.id,
+    title: item.title,
+    price: item.price,
+    description: item.description,
+    image: item.image,
+    category: item.category,
+  }));
+
+  return products;
 }
 
 export default async function EdgeProductsPage() {
